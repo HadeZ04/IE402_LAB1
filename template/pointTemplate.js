@@ -28,6 +28,32 @@ export var point_template_city = {
   content: "Thành phố ở <b>{Location}</b>.",
 };
 
+export var line_template = {
+  title: "{Name}",
+  content: [
+    {
+      type: "fields",
+      fieldInfos: [
+        {
+          fieldName: "Length",
+          label: "Chiều dài (km)",
+          visible: true,
+        },
+        {
+          fieldName: "Width",
+          label: "Lộ giới (m)",
+          visible: true,
+        },
+        {
+          fieldName: "Location",
+          label: "Thông tin các tỉnh đi qua",
+          visible: true,
+        },
+      ],
+    },
+  ],
+};
+
 export var info_province_template = {
   title: "{PROVINCE_NAME}",
   content: [
