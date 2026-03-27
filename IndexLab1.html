@@ -1,0 +1,183 @@
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no" />
+    <title>ArcGIS Lab 1 - Bản đồ Nam Bộ</title>
+
+    <link rel="stylesheet" href="https://js.arcgis.com/4.26/esri/themes/light/main.css" />
+    <script src="https://js.arcgis.com/4.26/"></script>
+
+    <style>
+        html,
+        body,
+        #viewDiv {
+            padding: 0;
+            margin: 0;
+            height: 100%;
+            width: 100%;
+        }
+    </style>
+
+    <script type="module">
+        import { createData } from './template/createData.js'
+
+        // 8 tỉnh/thành
+        import { BinhThuanLine } from './provinces/BinhThuan/Lines.js'
+        import { NinhThuanLine } from './provinces/NinhThuan/Lines.js'
+        import { LDLines } from './provinces/LamDong/LDLines.js'
+        import { VTLines } from './provinces/VungTau/VTLines.js'
+        import { DongNaiLines } from './provinces/DongNai/DongNaiLines.js'
+        import { TNLines } from './provinces/TayNinh/TNLines.js'
+        import { BPLines } from './provinces/BinhPhuoc/BPLines.js'
+        import { BDLines } from './provinces/BinhDuong/Lines.js'
+
+        // 12 tuyến đường (khác nhau)
+        import { QL1ALDLine } from './provinces/BinhDuong/QL1A.js'
+        import { OneABTLine } from './provinces/BinhThuan/1A.js'
+        import { QL28BTLine } from './provinces/BinhThuan/QL28.js'
+        import { QL28BBTLine } from './provinces/BinhThuan/QL28B.js'
+        import { QL55BTLine } from './provinces/BinhThuan/QL55.js'
+        import { QL55BBTLine } from './provinces/BinhThuan/QL55B.js'
+        import { QL27NTLine } from './provinces/NinhThuan/QL27.js'
+        import { QL27BNTLine } from './provinces/NinhThuan/QL27B.js'
+        import { QL1ANTLine } from './provinces/NinhThuan/QL1A.js'
+        import { QL20LDLine } from './provinces/LamDong/QL20.js'
+        import { QL51LDLine } from './provinces/VungTau/QL51.js'
+        import { QL56LDLine } from './provinces/VungTau/QL56.js'
+
+        // 12 trường đại học
+        import * as universities from './universities/University.js'
+
+        const arrUniversity = Object.values(universities)
+
+        var points = [].concat([
+            ...arrUniversity
+        ])
+
+        var lines = [].concat([
+            // 8 tỉnh/thành
+            BinhThuanLine, NinhThuanLine, LDLines, VTLines,
+            DongNaiLines, TNLines, BPLines, BDLines,
+
+            // 12 tuyến đường
+            QL1ALDLine, OneABTLine, QL28BTLine, QL28BBTLine, QL55BTLine, QL55BBTLine,
+            QL27NTLine, QL27BNTLine, QL1ANTLine, QL20LDLine, QL51LDLine, QL56LDLine,
+        ])
+
+        var jsondata = createData(points, lines);
+
+        require([
+            "esri/Map",
+            "esri/views/MapView",
+            "esri/Graphic",
+            "esri/layers/GraphicsLayer"
+        ], function (Map, MapView, Graphic, GraphicsLayer) {
+
+            const map = new Map({
+                basemap: "hybrid"
+            });
+
+            const view = new MapView({
+                center: [107.0, 11.5],
+                container: "viewDiv",
+                map: map,
+                zoom: 7
+            });
+
+            var createGraphic = function (data) {
+                return new Graphic({
+                    geometry: data,
+                    symbol: data.symbol,
+                    attributes: data,
+                    popupTemplate: data.popupTemplate
+                });
+            };
+
+            var graphicsLayer = new GraphicsLayer();
+
+            jsondata.polygons.forEach(function (data) {
+                graphicsLayer.add(createGraphic(data));
+            });
+            jsondata.lines.forEach(function (data) {
+                graphicsLayer.add(createGraphic(data));
+            });
+            jsondata.points.forEach(function (data) {
+                graphicsLayer.add(createGraphic(data));
+            });
+
+            map.add(graphicsLayer);
+
+            // Lưu graphic và symbol gốc đang được highlight
+            var highlightedGraphic = null;
+            var originalSymbol = null;
+
+            view.on("click", function(event) {
+                view.hitTest(event).then(function(response) {
+                    // Khôi phục symbol gốc cho graphic trước đó
+                    if (highlightedGraphic && originalSymbol) {
+                        highlightedGraphic.symbol = originalSymbol;
+                    }
+
+                    var result = response.results.find(function(r) {
+                        return r.graphic && r.graphic.layer === graphicsLayer;
+                    });
+
+                    if (result) {
+                        var graphic = result.graphic;
+                        var geomType = graphic.geometry.type;
+
+                        // Lưu symbol gốc
+                        originalSymbol = graphic.symbol.clone();
+                        highlightedGraphic = graphic;
+
+                        // Tạo symbol highlight tùy theo loại geometry
+                        if (geomType === "polygon") {
+                            graphic.symbol = {
+                                type: "simple-fill",
+                                color: [255, 255, 0, 0.6],
+                                outline: {
+                                    color: [255, 0, 0],
+                                    width: 3
+                                }
+                            };
+                        } else if (geomType === "polyline") {
+                            graphic.symbol = {
+                                type: "simple-line",
+                                color: [255, 0, 0],
+                                width: 5
+                            };
+                        } else if (geomType === "point") {
+                            graphic.symbol = {
+                                type: "simple-marker",
+                                color: [255, 0, 0],
+                                size: 18,
+                                outline: {
+                                    color: [255, 255, 255],
+                                    width: 2
+                                }
+                            };
+                        }
+
+                        // Mở popup
+                        view.popup.open({
+                            features: [graphic],
+                            location: event.mapPoint
+                        });
+                    } else {
+                        // Click vào vùng trống - reset highlight
+                        highlightedGraphic = null;
+                        originalSymbol = null;
+                        view.popup.close();
+                    }
+                });
+            });
+        });
+    </script>
+</head>
+
+<body>
+    <div id="viewDiv"></div>
+</body>
+
+</html>
