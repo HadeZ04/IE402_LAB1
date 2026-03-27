@@ -20,7 +20,15 @@ export var point_template_area = {
 
 export var point_template_university = {
   title: "{Name}",
-  content: "Trường ở <b>{Location}</b>.",
+  content: `
+    <div>
+      <p><b>Tên trường:</b> {Name}</p>
+      <p><b>Địa điểm:</b> {Location}</p>
+      <p><b>Năm thành lập:</b> {NamThanhLap}</p>
+      <p><b>Ngành đào tạo:</b> {Nganh}</p>
+      <p><b>Số sinh viên:</b> {SoSV}</p>
+    </div>
+  `,
 };
 
 export var point_template_city = {

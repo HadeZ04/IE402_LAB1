@@ -1,4 +1,4 @@
-<html lang="en">
+﻿<html lang="en">
 
 <head>
     <meta charset="utf-8" />
@@ -67,19 +67,21 @@
             ...arrUniversity
         ])
 
-        var lines = [].concat([
+        var polygons = [].concat([
             // 8 tỉnh/thành
             BinhThuanLine, NinhThuanLine, LDLines, VTLines,
-            DongNaiLines, TNLines, BPLines, BDLines,
+            DongNaiLines, TNLines, BPLines, BDLines
+        ])
 
-            // 12 tuyến đường
+        var lines = [].concat([
+            // 24 tuyến đường
             QL1ALDLine, OneABTLine, QL28BTLine, QL28BBTLine, QL55BTLine, QL55BBTLine,
             QL27NTLine, QL27BNTLine, QL1ANTLine, QL20LDLine, QL51LDLine, QL56LDLine, QL1ACMLine,
             QL1ABLLine, QL51DNLine, QL1ASTLine, QL1AHGLine, QL1ACTLine, QL1AVLLine, QL1ATGLine,
             QL1ALALine, QL1AHCMLine, QL56DNLine, QL55LDLine
         ])
 
-        var jsondata = createData(points, lines);
+        var jsondata = createData(points, lines, polygons);
 
         require([
             "esri/Map",
@@ -128,7 +130,7 @@
 
             view.on("click", function(event) {
                 view.hitTest(event).then(function(response) {
-                    // Khôi phục symbol gốc cho graphic trước đó
+                     // Khôi phục symbol gốc cho graphic trước đó
                     if (highlightedGraphic && originalSymbol) {
                         highlightedGraphic.symbol = originalSymbol;
                     }
@@ -179,7 +181,7 @@
                             location: event.mapPoint
                         });
                     } else {
-                        // Click vào vùng trống - reset highlight
+                       // Click vào vùng trống - reset highlight
                         highlightedGraphic = null;
                         originalSymbol = null;
                         view.popup.close();
