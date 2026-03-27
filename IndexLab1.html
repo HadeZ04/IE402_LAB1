@@ -21,6 +21,7 @@
 
     <script type="module">
         import { createData } from './template/createData.js'
+        import { lines as linesData } from './js/data.js'
 
         // 8 tỉnh/thành
         import { BinhThuanLine } from './provinces/BinhThuan/Lines.js'
@@ -31,32 +32,6 @@
         import { TNLines } from './provinces/TayNinh/TNLines.js'
         import { BPLines } from './provinces/BinhPhuoc/BPLines.js'
         import { BDLines } from './provinces/BinhDuong/Lines.js'
-
-        // 12 tuyến đường (khác nhau)
-        import { QL1ALDLine } from './provinces/BinhDuong/QL1A.js'
-        import { OneABTLine } from './provinces/BinhThuan/1A.js'
-        import { QL28BTLine } from './provinces/BinhThuan/QL28.js'
-        import { QL28BBTLine } from './provinces/BinhThuan/QL28B.js'
-        import { QL55BTLine } from './provinces/BinhThuan/QL55.js'
-        import { QL55BBTLine } from './provinces/BinhThuan/QL55B.js'
-        import { QL27NTLine } from './provinces/NinhThuan/QL27.js'
-        import { QL27BNTLine } from './provinces/NinhThuan/QL27B.js'
-        import { QL1ANTLine } from './provinces/NinhThuan/QL1A.js'
-        import { QL20LDLine } from './provinces/LamDong/QL20.js'
-        import { QL51LDLine } from './provinces/VungTau/QL51.js'
-        import { QL56LDLine } from './provinces/VungTau/QL56.js'
-        import { QL1ACMLine } from './provinces/CaMau/1A.js'
-        import { QL1ABLLine } from './provinces/BacLieu/1A.js'
-        import { QL51DNLine } from './provinces/DongNai/QL51.js'
-        import { QL1ASTLine } from './provinces/SocTrang/1A.js'
-        import { QL1AHGLine } from './provinces/HauGiang/1A.js'
-        import { QL1ACTLine } from './provinces/CanTho/1A.js'
-        import { QL1AVLLine } from './provinces/VinhLong/1A.js'
-        import { QL1ATGLine } from './provinces/TienGiang/1A.js'
-        import { QL1ALALine } from './provinces/LongAn/1A.js'
-        import { QL1AHCMLine } from './provinces/HoChiMinh/1A.js'
-        import { QL56DNLine } from './provinces/DongNai/QL56.js'
-        import { QL55LDLine } from './provinces/LamDong/QL55.js'
 
         // 12 trường đại học
         import * as universities from './universities/University.js'
@@ -73,13 +48,8 @@
             DongNaiLines, TNLines, BPLines, BDLines
         ])
 
-        var lines = [].concat([
-            // 24 tuyến đường
-            QL1ALDLine, OneABTLine, QL28BTLine, QL28BBTLine, QL55BTLine, QL55BBTLine,
-            QL27NTLine, QL27BNTLine, QL1ANTLine, QL20LDLine, QL51LDLine, QL56LDLine, QL1ACMLine,
-            QL1ABLLine, QL51DNLine, QL1ASTLine, QL1AHGLine, QL1ACTLine, QL1AVLLine, QL1ATGLine,
-            QL1ALALine, QL1AHCMLine, QL56DNLine, QL55LDLine
-        ])
+        // 12 tuyến đường
+        var lines = linesData
 
         var jsondata = createData(points, lines, polygons);
 
